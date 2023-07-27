@@ -4,11 +4,12 @@ import com.dgmf.dto.EmployeeDTO;
 import com.dgmf.entity.Employee;
 import com.dgmf.repository.EmployeeRepository;
 import com.dgmf.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -24,5 +25,21 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
 
         return employee;
+    }
+
+    @Override
+    public List<EmployeeDTO> getAllEmployees() {
+        // Recupération de tous les "Employee" de la DB
+        List<Employee> employees = employeeRepository.findAll();
+        // Conversion de la liste d'Employee en une liste d'EmployeeDTO
+        List<EmployeeDTO> employeeDTOS = employees.stream()
+                .map(employee -> new EmployeeDTO(
+                        employee.getId(),
+                        employee.getFirstName(),
+                        employee.getLastName(),
+                        employee.getEmailId()))
+                .collect(Collectors.toList());
+
+        return employeeDTOS;
     }
 }
